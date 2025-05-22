@@ -1,9 +1,9 @@
 class Rutina {
-    var intensidad = null
+    var intensidad = null // no se tiene que recordar, sino calcular => method 
     var descanso = null
 
     method caloriasQuemadas(tiempo) {
-        return 100 * (tiempo - descanso) * intensidad
+        return 100 * (tiempo - descanso) * intensidad // definir de donde sale cada cosa, por eso mejor method
     }
 }
 class Running inherits Rutina{
@@ -73,3 +73,43 @@ class RemoDeCompeticion inherits Remo( intensidad = 1.7) {
     }
 }
 
+class Persona {
+    var peso = null
+    const kgsXCalQuePierde = null
+    var tiempoEjercita = null
+
+
+    method pesoQueSePierdeAlAplicar(rutina) {
+        return rutina.caloriasQuemadas(tiempoEjercita) / kgsXCalQuePierde
+    }
+
+    method aplicar(rutina) {
+        peso -= self.pesoQueSePierdeAlAplicar(rutina)
+    }
+}
+
+class PersonaSedentaria inherits Persona( kgsXCalQuePierde = 7000) {
+
+    method tiempoEjercita(_tiempoEjercita) {
+        tiempoEjercita = _tiempoEjercita
+    }
+
+    override method aplicar(rutina) {
+        self.validarAplicarRutina()
+        peso =- self.pesoQueSePierdeAlAplicar(rutina)
+    }
+
+    method validarAplicarRutina() {
+        if (not self.tienePesoSuficiente()) {
+            self.error("Esta persona no tiene el peso mínimo necesario para hacer la rutina.")
+        }
+    }
+
+    method tienePesoSuficiente() {
+        return peso > self.pesoMinimoParaAplicarRutina()
+    }
+
+    method pesoMinimoParaAplicarRutina() {
+        return 50
+    }
+}
