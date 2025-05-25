@@ -56,7 +56,11 @@ class Persona {
     method tiempo()
     
     method pesoPerdidoAlHacer(rutina) {
-        return rutina.caloriasQuemadas(self.tiempo()) / self.kilosPorCaloríaQuePierde()
+        return self.caloriasQuemadasSiHace(rutina) / self.kilosPorCaloríaQuePierde()
+    }
+
+    method caloriasQuemadasSiHace(rutina) {
+        return rutina.caloriasQuemadas(self.tiempo())
     }
 
     method hacerRutina(rutina) {
@@ -120,6 +124,20 @@ class Club {
             predio => predio.caloriasQuemadasSiHaceTodo(persona)
         })
     }
+
+    method prediosTranquis(persona) {
+        return predios.filter({
+            predio => predio.alMenosUnaRutinaDeMenosDe500Cals(persona)
+        })
+    }
+
+    method rutinasMasExigentes(persona) {
+        return predios.map({
+            predio => predio.laQueMasCaloriasQuemaPara(persona)
+        }).asSet()
+    }
+
+
 }
 
 class Predio {
@@ -127,7 +145,23 @@ class Predio {
 
     method caloriasQuemadasSiHaceTodo(persona) {
         return rutinas.sum({
-            rutina => persona. 
+            rutina => persona.caloriasQuemadasSiHace(rutina) 
+        })
+    }
+
+    method alMenosUnaRutinaDeMenosDe500Cals(persona) {
+        return rutinas.any({
+            rutina => persona.caloriasQuemadasSiHace(rutina) < self.caloriasParaSerTranqui()
+        })
+    }
+
+    method caloriasParaSerTranqui() {
+        return 500
+    }
+
+    method laQueMasCaloriasQuemaPara(persona) {
+        return rutinas.max({
+            rutina => persona.caloriasQuemadasSiHace(rutina)
         })
     }
 }
